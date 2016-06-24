@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">DevIntensive</string>
+    <string name="app_name">Вереникин Дмитрий</string>
+
+    <string name="phone_number">Номер телефона</string>
+    <string name="e_mail">E-mail</string>
+    <string name="vkontakte_profile">Профиль VK</string>
+    <string name="github_repozitory">Репозиторий</string>
+    <string name="about">О себе</string>
+    
+    <!-- Статистические данные -->
+    <string name="rating">Рейтинг</string>
+    <string name="number_writed_string">Написано строк кода</string>
+    <string name="number_of_projects">Проектов</string>
+
 </resources>
