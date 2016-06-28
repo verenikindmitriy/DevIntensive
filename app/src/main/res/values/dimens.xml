@@ -7,6 +7,7 @@
     <dimen name="size_small_24">24dp</dimen>
     <dimen name="size_medium_56">56dp</dimen>
     <dimen name="size_large_72">72dp</dimen>
+    <dimen name="size_larger_88">88dp</dimen>
 
     <!-- spaces -->
     <dimen name="spacing_small_8">8dp</dimen>
@@ -33,5 +34,8 @@
     <dimen name="button_height_normal_40">40dp</dimen>
     <dimen name="button_height_short_32">32dp</dimen>
     <dimen name="line_size">2dp</dimen>
+    <dimen name="profile_image_size">256dp</dimen>
+
+    <dimen name="fab_right_space">8dp</dimen>
 
 </resources>
