@@ -6,6 +6,8 @@
     <string name="vkontakte_profile">Профиль VK</string>
     <string name="github_repozitory">Репозиторий</string>
     <string name="about">О себе</string>
+    <string name="my_profile">Мой профиль</string>
+    <string name="my_team">Команда</string>
     
     <!-- Статистические данные -->
     <string name="rating">Рейтинг</string>
