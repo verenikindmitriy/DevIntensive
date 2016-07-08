@@ -1,18 +1,27 @@
 package com.softdesign.devintensive.ui.activities;
 
+import android.Manifest;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -20,8 +29,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
+import android.util.Property;
 import android.view.*;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -37,6 +49,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -68,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private File mPhotoFile = null;
     private Uri mSelectedImage = null;
 
+    @BindView(R.id.button_call) ImageView button_call;
+    @BindView(R.id.button_send_email) ImageView button_send_email;
+    @BindView(R.id.button_open_vk) ImageView button_open_vk;
+    @BindView(R.id.button_open_git) ImageView button_open_git;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +116,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mUserInfoViews.add(mUserVk);
         mUserInfoViews.add(mUserGit);
         mUserInfoViews.add(mUserBio);
+
+        //маска для номера телефона
+        mUserPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+
+        ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
             mCurrentEditMode = savedInstanceState.getInt(ConstantManager.EDIT_MODE_KEY, 1);
@@ -242,6 +268,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.profile_placeholder:
                 showDialog(ConstantManager.LOAD_PROFILE_PHOTO);
                 break;
+
+            case R.id.button_call:
+                String number = mUserPhone.getText().toString();
+                if (!number.equals("") || !number.equals("null")) {
+
+                    //проверка разрешения на звонок
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CALL_PHONE}, ConstantManager.PERMISSION_CALL_REQUEST_CODE);
+                    } else {
+                        Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.fromParts("tel", number, null));
+                        startActivity(callIntent);
+                    }
+                }
+                break;
+
+            case R.id.button_send_email:
+                String email = mUserMail.getText().toString();
+                if (!email.equals("") || !email.equals("null")) {
+                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", email, null));
+                    startActivity(Intent.createChooser(emailIntent, "Отправка письма..."));
+                }
+                break;
+
+            case R.id.button_open_vk:
+                String vkUrl = mUserVk.getText().toString();
+                if (!vkUrl.equals("") || !vkUrl.equals("null")) {
+                    Intent vkIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://vk.com/" + vkUrl));
+                    startActivity(vkIntent);
+                }
+                break;
+
+            case R.id.button_open_git:
+                String gitUrl = mUserGit.getText().toString();
+                if (!gitUrl.equals("") || !gitUrl.equals("null")) {
+                    Intent gitIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/" + gitUrl));
+                    startActivity(gitIntent);
+                }
+                break;
         }
     }
 
@@ -257,6 +321,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 userValue.setEnabled(true);
                 userValue.setFocusable(true);
                 userValue.setFocusableInTouchMode(true);
+
+                if (userValue == mUserPhone) {
+                    userValue.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(mUserPhone, InputMethodManager.SHOW_IMPLICIT);
+                }
 
                 showProfilePlaceholder();
                 lockToolbar();
@@ -302,17 +372,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void loadPhotoFromCamera(){
-        Intent takeCaptureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        try {
-            mPhotoFile = createdImageFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void loadPhotoFromCamera() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Intent takeCaptureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            try {
+                mPhotoFile = createdImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        if (mPhotoFile != null){
-            takeCaptureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mPhotoFile));
-            startActivityForResult(takeCaptureIntent, ConstantManager.REQUEST_CAMERA_PICTURE);
+            if (mPhotoFile != null) {
+                takeCaptureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mPhotoFile));
+                startActivityForResult(takeCaptureIntent, ConstantManager.REQUEST_CAMERA_PICTURE);
+            }
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    android.Manifest.permission.CAMERA,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, ConstantManager.PERMISSION_CAMERA_REQUEST_CODE);
         }
     }
 
@@ -383,5 +461,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mDataManager.getPreferenceManager().saveUserPhoto(selectedImage);
 
+    }
+
+    /**
+     * Обрабатывает ответ о получении разрешений
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == ConstantManager.PERMISSION_CAMERA_REQUEST_CODE && grantResults.length == 2) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                loadPhotoFromCamera();
+            }
+        }
+
+        if (requestCode == ConstantManager.PERMISSION_CALL_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                onClick(ButterKnife.findById(this, R.id.button_call));
+            }
+        }
     }
 }

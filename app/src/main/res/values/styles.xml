@@ -21,7 +21,7 @@
         <item name="android:layout_height">@dimen/size_small_24</item>
         <item name="android:layout_marginTop">@dimen/size_small_24</item>
     </style>
-    
+
     <style name="icon.left" parent="icon">
         <item name="android:layout_gravity">top|left</item>
         <item name="android:layout_marginLeft">@dimen/spacing_normal_16</item>
@@ -30,6 +30,8 @@
     <style name="icon.right" parent="icon">
         <item name="android:layout_gravity">top|right</item>
         <item name="android:layout_marginRight">@dimen/spacing_medium_32</item>
+        <item name="android:clickable">true</item>
+        <item name="android:onClick">onClick</item>
     </style>
 
     <style name="statistic">
@@ -49,6 +51,47 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">14sp</item>
+    </style>
+
+
+    <style name="auth_layout_style">
+    <item name="android:layout_gravity">center</item>
+    <item name="android:background">@color/white</item>
+    <item name="android:padding">@dimen/spacing_medium_32</item>
+    <item name="android:orientation">vertical</item>
+</style>
+
+
+    <style name="auth_textinput_style">
+    <item name="android:layout_marginTop">@dimen/spacing_normal_16</item>
+    <item name="android:textColorHint">@color/grey_light</item>
+</style>
+
+    <style name="auth_textfield_style">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:maxLength">30</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+    </style>
+
+    <style name="auth_button">
+        <item name="android:layout_marginTop">@dimen/spacing_normal_16</item>
+        <item name="android:layout_marginLeft">@dimen/spacing_medium_32</item>
+        <item name="android:layout_marginRight">@dimen/spacing_medium_32</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
+    <style name="auth_clicktable_textview_style">
+        <item name="android:clickable">true</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/spacing_normal_16</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:text">@string/auth.title.forgot_pass</item>
+        <item name="android:textColor">@color/grey_light</item>
+
     </style>
 
 </resources>

@@ -14,4 +14,15 @@
     <string name="number_writed_string">Написано строк кода</string>
     <string name="number_of_projects">Проектов</string>
 
+    <string name="change_profile_photo">Изменить фотографию</string>
+    <string name="photo_load_from_gallery">Загрузить из галереи</string>
+    <string name="photo_from_camera">Сделать снимок</string>
+    <string name="cancel">Отмена</string>
+    <string name="chose_photo">Выберите фото</string>
+
+    <string name="auth.hint.e_mail">E-mail</string>
+    <string name="auth.hint.pass">Пароль</string>
+    <string name="auth.title.input">ВОЙТИ</string>
+    <string name="auth.title.forgot_pass">Забыли пароль?</string>
+
 </resources>
