@@ -15,6 +15,7 @@
         app:layout_behavior=".StatisticBehavior">
 
         <LinearLayout
+            android:id="@+id/rating_block"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.3"
@@ -22,8 +23,8 @@
             android:orientation="vertical">
 
             <TextView
-                style="@style/statistic.numbers"
-                android:text="5"/>
+                android:id="@+id/statistic_rating"
+                style="@style/statistic.numbers"/>
 
             <TextView
                 style="@style/statistic"
@@ -39,6 +40,7 @@
             android:background="@color/white"/>
 
         <LinearLayout
+            android:id="@+id/lines_code_block"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.4"
@@ -46,8 +48,8 @@
             android:orientation="vertical">
 
             <TextView
-                style="@style/statistic.numbers"
-                android:text="5"/>
+                android:id="@+id/statistic_code_lines"
+                style="@style/statistic.numbers"/>
 
             <TextView
                 style="@style/statistic"
@@ -63,6 +65,7 @@
             android:background="@color/white"/>
 
         <LinearLayout
+            android:id="@+id/project_block"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.3"
@@ -70,8 +73,8 @@
             android:orientation="vertical">
 
             <TextView
-                style="@style/statistic.numbers"
-                android:text="5"/>
+                android:id="@+id/statistic_project"
+                style="@style/statistic.numbers"/>
 
             <TextView
                 style="@style/statistic"

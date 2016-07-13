@@ -22,7 +22,7 @@
 
     <string name="auth.hint.e_mail">E-mail</string>
     <string name="auth.hint.pass">Пароль</string>
-    <string name="auth.title.input">ВОЙТИ</string>
+    <string name="auth.title.input">Войти</string>
     <string name="auth.title.forgot_pass">Забыли пароль?</string>
 
 </resources>

@@ -2,24 +2,21 @@ package com.softdesign.devintensive.ui.activities;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -31,12 +28,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
-import android.util.Property;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
@@ -89,6 +86,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @BindView(R.id.button_open_vk) ImageView button_open_vk;
     @BindView(R.id.button_open_git) ImageView button_open_git;
 
+    @BindViews({R.id.statistic_rating, R.id.statistic_code_lines, R.id.statistic_project})
+    List<TextView> mStatisticValues;
+
+    ViewHolder holder;
+
+    static class ViewHolder {
+        @BindView(R.id.user_avatar) ImageView mAvatar;
+
+        @BindViews({R.id.user_name_txt, R.id.user_email_txt})
+        List<TextView> mHeaderInfo;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +133,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //маска для номера телефона
         mUserPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        View hView = navigationView.getHeaderView(0);
+
+        holder  = new ViewHolder(hView);
+
         ButterKnife.bind(this);
 
         if (savedInstanceState != null) {
@@ -127,23 +145,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             changeEditMode(mCurrentEditMode);
         }
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-        View hView = navigationView.getHeaderView(0);
+        Uri savedAvatarUri = mDataManager.getPreferenceManager().loadUserAvatar();
+        Picasso.with(this).load(savedAvatarUri).placeholder(R.drawable.user_avatar).into(holder.mAvatar);
 
-        user_avatar = (ImageView) hView.findViewById(R.id.user_avatar);
-        if (user_avatar != null) {
-            Bitmap oldAvatar = BitmapFactory.decodeResource(MainActivity.this.getResources(), R.drawable.user_avatar);
-            Bitmap roundAvatar = BitmapsManager.getRoundedBitmap(oldAvatar);
+        Bitmap oldAvatar = ((BitmapDrawable) holder.mAvatar.getDrawable()).getBitmap();
+        Bitmap roundAvatar = BitmapsManager.getRoundedBitmap(oldAvatar);
 
-            user_avatar.setImageBitmap(roundAvatar);
-        }
+        holder.mAvatar.setImageBitmap(roundAvatar);
 
         mFab.setOnClickListener(this);
         mProfilePlaceholder.setOnClickListener(this);
 
         setupToolbar();
         setupDrawer();
-        loadUserInfoValue();
+        initUserFields();
+        initUserInfoValues();
+
         Picasso.with(this).load(mDataManager.getPreferenceManager().loadUserPhoto()).into(mProfileImage);
 
         Log.d(TAG, "onCreate");
@@ -200,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        saveUserInfoValue();
+        saveUserFields();
         Log.d(TAG, "onPause");
     }
 
@@ -345,24 +362,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 mCollapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(R.color.white));
 
-                saveUserInfoValue();
+                saveUserFields();
             }
         }
     }
 
-    private void loadUserInfoValue() {
+    private void initUserFields() {
         List<String> userData = mDataManager.getPreferenceManager().loadUserProfileData();
         for (int i = 0; i < userData.size(); i++) {
             mUserInfoViews.get(i).setText(userData.get(i));
         }
+
+        List<String> userHeaderData = mDataManager.getPreferenceManager().loadHeaderInfoData();
+        for (int i = 0; i < userHeaderData.size(); i++) {
+            holder.mHeaderInfo.get(i).setText(userHeaderData.get(i));
+        }
     }
 
-    private void saveUserInfoValue() {
+    private void saveUserFields() {
         List<String> userData = new ArrayList<>();
         for (EditText userFieldView : mUserInfoViews) {
             userData.add(userFieldView.getText().toString());
         }
         mDataManager.getPreferenceManager().saveUserProfileData(userData);
+    }
+
+    private void initUserInfoValues(){
+        List<String> userData = mDataManager.getPreferenceManager().loadUserProfileValues();
+        for (int i = 0; i < userData.size(); i++) {
+            mStatisticValues.get(i).setText(userData.get(i));
+        }
     }
 
     private void loadPhotoFromGallery(){
@@ -480,7 +509,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (requestCode == ConstantManager.PERMISSION_CALL_REQUEST_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                onClick(ButterKnife.findById(this, R.id.button_call));
+                onClick(button_call);
             }
         }
     }

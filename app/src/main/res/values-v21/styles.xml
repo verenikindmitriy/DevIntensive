@@ -10,4 +10,9 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <style name="AppTheme.Button.Red" parent="Base.Widget.AppCompat.Button.Colored">
+        <item name="android:colorButtonNormal">@color/color_accent</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>
