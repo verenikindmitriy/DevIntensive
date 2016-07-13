@@ -55,10 +55,11 @@
 
 
     <style name="auth_layout_style">
-    <item name="android:layout_gravity">center</item>
-    <item name="android:background">@color/white</item>
-    <item name="android:padding">@dimen/spacing_medium_32</item>
-    <item name="android:orientation">vertical</item>
+        <item name="android:layout_gravity">bottom</item>
+        <item name="android:paddingBottom">@dimen/spacing_medial_24</item>
+        <item name="android:paddingLeft">@dimen/spacing_medial_24</item>
+        <item name="android:paddingRight">@dimen/spacing_medial_24</item>
+        <item name="android:background">@color/white</item>
 </style>
 
 
@@ -92,6 +93,11 @@
         <item name="android:text">@string/auth.title.forgot_pass</item>
         <item name="android:textColor">@color/grey_light</item>
 
+    </style>
+
+    <style name="AppTheme.Button.Red" parent="Base.Widget.AppCompat.Button.Colored">
+        <item name="android:colorButtonNormal">@color/color_accent</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 </resources>
