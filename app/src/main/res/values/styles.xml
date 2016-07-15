@@ -42,6 +42,13 @@
         <item name="android:textSize">@dimen/font_small_12</item>
     </style>
 
+    <style name="statistic.light">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/font_normal_16</item>
+    </style>
+
     <style name="statistic.numbers" parent="statistic">
         <item name="android:textSize">@dimen/font_normal_15</item>
     </style>
@@ -64,9 +71,9 @@
 
 
     <style name="auth_textinput_style">
-    <item name="android:layout_marginTop">@dimen/spacing_normal_16</item>
-    <item name="android:textColorHint">@color/grey_light</item>
-</style>
+        <item name="android:layout_marginTop">@dimen/spacing_normal_16</item>
+        <item name="android:textColorHint">@color/grey_light</item>
+    </style>
 
     <style name="auth_textfield_style">
         <item name="android:textColor">@color/black</item>
@@ -98,6 +105,13 @@
     <style name="AppTheme.Button.Red" parent="Base.Widget.AppCompat.Button.Colored">
         <item name="android:colorButtonNormal">@color/color_accent</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ToolBarStyle" parent="Theme.AppCompat">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+
     </style>
 
 </resources>
