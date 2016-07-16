@@ -141,6 +141,9 @@ public class UserModelRes {
         @Expose
         private String title;
 
+        public String getGit() {
+            return git;
+        }
     }
 
 

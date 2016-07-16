@@ -13,20 +13,17 @@ import com.softdesign.devintensive.data.network.restmodels.res.UserListRes;
 import com.softdesign.devintensive.ui.view.AspectRatioImageView;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
 
-    Context mContext;
-    List<UserListRes.UserData> mUsers;
+    private Context mContext;
+    private List<UserListRes.UserData> mUsers;
+    private UserViewHolder.CustomClickListener mCustomClickListener;
 
-    public UsersAdapter(List<UserListRes.UserData> users) {
+    public UsersAdapter(List<UserListRes.UserData> users, UserViewHolder.CustomClickListener customClickListener) {
         mUsers = users;
-    }
-
-    public UsersAdapter() {
-
+        this.mCustomClickListener = customClickListener;
     }
 
     @Override
@@ -35,7 +32,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         mContext = parent.getContext();
 
         View convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user_list, parent, false);
-        return new UserViewHolder(convertView);
+        return new UserViewHolder(convertView, mCustomClickListener);
     }
 
     @Override
@@ -44,9 +41,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
         Picasso.with(mContext)
                 .load(user.getPublicInfo().getPhoto())
-                .placeholder(mContext.getResources().getDrawable(R.drawable.user_bg))
                 .error(mContext.getResources().getDrawable(R.drawable.user_bg))
-                .into(holder.userPhoto);
+                .placeholder(mContext.getResources().getDrawable(R.drawable.user_bg))
+                .fit().into(holder.userPhoto);
 
         holder.mFullName.setText(user.getFullName());
         holder.mRating.setText(String.valueOf(user.getProfileValues().getRating()));
@@ -67,14 +64,17 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         return mUsers.size();
     }
 
-    public static class UserViewHolder extends RecyclerView.ViewHolder {
+    public static class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         protected AspectRatioImageView userPhoto;
         protected TextView mFullName, mRating, mCodeLines, mProjects, mBio;
         protected Button mShowMore;
 
-        public UserViewHolder(View itemView) {
+        protected CustomClickListener mListener;
+
+        public UserViewHolder(View itemView, CustomClickListener customClickListener) {
             super(itemView);
+            this.mListener = customClickListener;
 
             userPhoto = (AspectRatioImageView) itemView.findViewById(R.id.user_photo_img);
             mFullName = (TextView) itemView.findViewById(R.id.user_full_name_txt);
@@ -83,6 +83,19 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
             mProjects = (TextView) itemView.findViewById(R.id.projects_txt);
             mBio = (TextView) itemView.findViewById(R.id.bio_txt);
             mShowMore = (Button) itemView.findViewById(R.id.more_info_btn);
+
+            mShowMore.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mListener != null){
+                mListener.onUserItemClickListener(getAdapterPosition());
+            }
+        }
+
+        public interface CustomClickListener{
+            void onUserItemClickListener(int position);
         }
     }
 }

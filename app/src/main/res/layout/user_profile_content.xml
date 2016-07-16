@@ -273,7 +273,7 @@
                     android:layout_height="wrap_content"
                     android:enabled="false"
                     android:focusable="false"
-                    android:hint="@string/github_repozitory"
+                    android:hint="@string/github_repository"
                     android:inputType="textMultiLine"
                     android:textColor="@color/black"
                     android:textColorHint="@color/grey"/>
