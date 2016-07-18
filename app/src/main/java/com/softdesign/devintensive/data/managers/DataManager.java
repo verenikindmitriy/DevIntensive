@@ -4,6 +4,7 @@ package com.softdesign.devintensive.data.managers;
 import com.softdesign.devintensive.data.network.RestService;
 import com.softdesign.devintensive.data.network.restmodels.ServiceGenerator;
 import com.softdesign.devintensive.data.network.restmodels.req.UserLoginReq;
+import com.softdesign.devintensive.data.network.restmodels.res.UserListRes;
 import com.softdesign.devintensive.data.network.restmodels.res.UserModelRes;
 
 import retrofit2.Call;
@@ -37,6 +38,10 @@ public class DataManager {
 
     public Call<UserModelRes> loginUser(UserLoginReq userLoginReq){
         return mRestService.loginUser(userLoginReq);
+    }
+
+    public Call<UserListRes> getUserList(){
+        return mRestService.getUserList();
     }
 
     //endregion

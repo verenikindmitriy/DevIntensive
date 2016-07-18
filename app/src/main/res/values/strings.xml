@@ -4,11 +4,11 @@
     <string name="phone_number">Номер телефона</string>
     <string name="e_mail">E-mail</string>
     <string name="vkontakte_profile">Профиль VK</string>
-    <string name="github_repozitory">Репозиторий</string>
+    <string name="github_repository">Репозиторий</string>
     <string name="about">О себе</string>
     <string name="my_profile">Мой профиль</string>
     <string name="my_team">Команда</string>
-    
+
     <!-- Статистические данные -->
     <string name="rating">Рейтинг</string>
     <string name="number_writed_string">Написано строк кода</string>
@@ -24,5 +24,6 @@
     <string name="auth.hint.pass">Пароль</string>
     <string name="auth.title.input">Войти</string>
     <string name="auth.title.forgot_pass">Забыли пароль?</string>
+    <string name="more_info_btn">Просмотр</string>
 
 </resources>
