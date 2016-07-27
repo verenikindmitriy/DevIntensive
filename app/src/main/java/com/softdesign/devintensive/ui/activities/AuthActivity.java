@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,7 +15,16 @@ import android.widget.TextView;
 import com.softdesign.devintensive.R;
 import com.softdesign.devintensive.data.managers.DataManager;
 import com.softdesign.devintensive.data.network.restmodels.req.UserLoginReq;
+import com.softdesign.devintensive.data.network.restmodels.res.UserListRes;
 import com.softdesign.devintensive.data.network.restmodels.res.UserModelRes;
+import com.softdesign.devintensive.data.storage.models.Repository;
+import com.softdesign.devintensive.data.storage.models.RepositoryDao;
+import com.softdesign.devintensive.data.storage.models.User;
+import com.softdesign.devintensive.data.storage.models.UserDTO;
+import com.softdesign.devintensive.data.storage.models.UserDao;
+import com.softdesign.devintensive.ui.adapters.UsersAdapter;
+import com.softdesign.devintensive.utils.AppConfig;
+import com.softdesign.devintensive.utils.ConstantManager;
 import com.softdesign.devintensive.utils.NetworkStatusChecker;
 
 import java.util.ArrayList;
@@ -29,6 +40,7 @@ import retrofit2.Response;
 
 public class AuthActivity extends AppCompatActivity {
 
+    private static final String TAG = ConstantManager.TAG_PREFIX + "Auth Activity";
     @BindViews({R.id.auth_login, R.id.auth_password})
     List<EditText> mAuthFields;
 
@@ -73,6 +85,17 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     private DataManager mDataManager;
+    private RepositoryDao mRepositoryDao;
+    private UserDao mUserDao;
+
+    private final Handler handler = new Handler();
+    private final Runnable splashTask = new Runnable() {
+        @Override
+        public void run() {
+            saveUserInDb();
+            finish();
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,6 +105,9 @@ public class AuthActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mDataManager = DataManager.getInstance();
+        mUserDao = mDataManager.getDaoSession().getUserDao();
+        mRepositoryDao = mDataManager.getDaoSession().getRepositoryDao();
+
 
     }
 
@@ -105,8 +131,17 @@ public class AuthActivity extends AppCompatActivity {
 
         mDataManager.getPreferenceManager().saveHeaderInfoValues(userModel.getData().getUser().getFirstName(), userModel.getData().getUser().getSecondName());
 
-        Intent loginIntent = new Intent(this, MainActivity.class);
-        startActivity(loginIntent);
+        //handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent loginIntent = new Intent(AuthActivity.this, UserListActivity.class);
+                startActivity(loginIntent);
+            }
+        }, AppConfig.START_DELAY);
+
+        handler.removeCallbacks(splashTask);
+        handler.postDelayed(splashTask, AppConfig.START_DELAY);
 
     }
 
@@ -118,5 +153,48 @@ public class AuthActivity extends AppCompatActivity {
         };
 
         mDataManager.getPreferenceManager().saveUserProfileValues(userValues);
+    }
+
+    private void saveUserInDb(){
+        Call<UserListRes> call = mDataManager.getUserListFromNetwork();
+
+        call.enqueue(new Callback<UserListRes>() {
+            @Override
+            public void onResponse(Call<UserListRes> call, Response<UserListRes> response) {
+
+                if (response.code() == 200) {
+
+                    List<Repository> allRepositories = new ArrayList<Repository>();
+                    List<User> allUsers = new ArrayList<User>();
+
+                    for (UserListRes.UserData userRes : response.body().getData()) {
+                        allRepositories.addAll(getRepoListFromUserRes(userRes));
+                        allUsers.add(new User(userRes));
+                    }
+
+                    mRepositoryDao.insertOrReplaceInTx(allRepositories);
+                    mUserDao.insertOrReplaceInTx(allUsers);
+
+                }else{
+                    Log.e(TAG, "onResponce: " + String.valueOf(response.errorBody().source()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserListRes> call, Throwable t) {
+                // TODO: 15.07.2016 Обработать ошибки
+            }
+        });
+    }
+
+    private List<Repository> getRepoListFromUserRes(UserListRes.UserData userData){
+        final String userId = userData.getId();
+
+        List<Repository> repositories = new ArrayList<>();
+        for (UserModelRes.Repo repositoryRes : userData.getRepositories().getRepo()) {
+            repositories.add(new Repository(userId, repositoryRes));
+        }
+
+        return repositories;
     }
 }

@@ -25,5 +25,8 @@
     <string name="auth.title.input">Войти</string>
     <string name="auth.title.forgot_pass">Забыли пароль?</string>
     <string name="more_info_btn">Просмотр</string>
+    <string name="error_user_list_can_not_be_load">Список пользователей не может быть загружен!</string>
+    <string name="search_of_user">Поиск пользователя</string>
+    <string name="search_hint_enter_user_name">Введите имя пользователя</string>
 
 </resources>
